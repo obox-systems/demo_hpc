@@ -5,14 +5,14 @@
 | Version(1 MB) |  Time(ms) |  
 | :--- | :---: |
 | Rust(cpu)   | 2.8956    |
-| wgsl(gpu)    | 0.9129    |
-| cuda(gpu)    | 0.051552    |
+| wgsl(gpu)    | 26,4761    |
+| cuda(gpu)    | 5,841182    |
 
 | Version(10 MB) |  Time(ms) |  
 | :--- | :---: |
 | Rust(cpu)   | 30.652    |
-| wgsl(gpu)    | 2.4583    |
-| cuda(gpu)    | 0.472672    |
+| wgsl(gpu)    | 58,7311    |
+| cuda(gpu)    | 35,963802    |
 
 
 ### WGSL steps time
