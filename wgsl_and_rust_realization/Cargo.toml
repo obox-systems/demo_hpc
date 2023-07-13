@@ -1,0 +1,12 @@
+[package]
+name = "wgsl_and_rust_realization"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wgpu = "*"
+pollster = "0.2"
+bytemuck = { version = "1.12", features = [ "derive" ] }
+futures-intrusive = "0.5.0"
