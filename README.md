@@ -5,13 +5,13 @@
 | Version(1 MB) |  Time(ms) |  
 | :--- | :---: |
 | Rust(cpu)   | 2.8956    |
-| wgsl(gpu)    | 26,4761    |
+| wgsl(gpu)    | 3.5801    |
 | cuda(gpu)    | 5,841182    |
 
 | Version(10 MB) |  Time(ms) |  
 | :--- | :---: |
 | Rust(cpu)   | 30.652    |
-| wgsl(gpu)    | 58,7311    |
+| wgsl(gpu)    | 29.1722    |
 | cuda(gpu)    | 35,963802    |
 
 
@@ -20,15 +20,15 @@
 
 | Step(1 MB) |  Time(ms) |  
 | :--- | :---: |
-| initialaze_gpu   | 793.7504    |
-| buffer    | 25.5632    |
-| wgsl_execution  | 0.9129    |
+| initialaze_gpu   | 575.7924    |
+| buffer    | 11.3628    |
+| wgsl_execution  | 0.034371    |
 
 | Step(10 MB) |  Time(ms) |  
 | :--- | :---: |
-| initialaze_gpu   | 802.9455    |
-| buffer    | 56.3066    |
-| wgsl_execution  | 2.4245    |
+| initialaze_gpu   | 545.835    |
+| buffer    | 49.9293    |
+| wgsl_execution  | 0.281717    |
 
 
 ### Cuda steps time
