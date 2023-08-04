@@ -130,7 +130,7 @@ impl BufCoder {
 			cpass.set_pipeline(&compute_pipeline);
 			cpass.set_bind_group(0, &bind_group, &[]);
 			cpass.insert_debug_marker("compute collatz iterations");
-			cpass.dispatch_workgroups(16, 1, 1); // Number of cells to run, the (x,y,z) size of item being processed
+			cpass.dispatch_workgroups(256, 1, 1); // Number of cells to run, the (x,y,z) size of item being processed
 		}
 		// Sets adds copy operation to command encoder.
 		// Will copy data from storage buffer on GPU to staging buffer on CPU.
@@ -240,16 +240,18 @@ fn add_two_vec(a: &[u32], b: &[u32]) -> Vec<u32> {
 }
 
 fn main() {
-    let r = vec![1; 1000000];
+    let vec1 = vec![1; 1000000];
+		let vec2 = vec![2; 1000000];
+		let vec3 = vec![2; 1000000];
 
-  	let mut bindings: Bindings = Bindings::initialize_one(r);
+  	let mut bindings: Bindings = Bindings::initialize_three(vec1, vec2, vec3);
 
     let t1 = std::time::Instant::now();
     let gpu = pollster::block_on(GpuConsts::initialaze()).unwrap();
     let macro_time = std::time::Instant::now() - t1;
 
     let t1 = std::time::Instant::now();
-    let bc = BufCoder::initialize(&gpu, &mut bindings, "add_two_vec_call", 1);
+    let bc = BufCoder::initialize(&gpu, &mut bindings, "vectorAddition", 3);
     let buffer_time = std::time::Instant::now() - t1;
 
     let t1 = std::time::Instant::now();
@@ -260,8 +262,8 @@ fn main() {
     println!("buffer_time {:?}", buffer_time);
     println!("wgsl_time {:?}", wgsl_time);
 
-	let v = vec![1; 10000000];
-  	let v2 = vec![2; 10000000];
+	let v = vec![1; 100000000];
+  let v2 = vec![2; 100000000];
 
 	let t1 = std::time::Instant::now();
 	add_two_vec(&v, &v2);
