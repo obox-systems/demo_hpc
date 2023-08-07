@@ -1,13 +1,11 @@
 use wgpu::{util::DeviceExt, BindGroupEntry, Instance, Adapter, Device, Queue, AdapterInfo, ShaderModule, Buffer, CommandEncoder};
+use wgsl_and_rust_realization::*;
 
 macro_rules! all_files {
 	($($file:expr),*) => {
 		{String::new()$(+include_str!($file)+"\n")*}
 	};
 }
-
-// Indicates a u32 overflow in an intermediate Collatz value
-const OVERFLOW: u32 = 0xffffffff;
 
 pub struct Bindings {
 	input_output: Vec<u32>,
@@ -141,11 +139,11 @@ impl BufCoder {
 }
 
 pub struct GpuConsts {
-	instance: Instance,
-	adapter: Adapter,
+	_instance: Instance,
+	_adapter: Adapter,
 	device: Device,
 	queue: Queue,
-	info: AdapterInfo,
+	_info: AdapterInfo,
 	cs_module: ShaderModule,
 }
 
@@ -187,7 +185,7 @@ impl GpuConsts {
 			).into()),
 		});
 
-		Ok(GpuConsts{instance, adapter, device, queue, info, cs_module})
+		Ok(GpuConsts{_instance: instance, _adapter: adapter, device, queue, _info: info, cs_module})
 	}
 
 	pub async fn run(&self, bufcoder: BufCoder) -> Option<Vec<u32>> {
@@ -269,4 +267,28 @@ fn main() {
 	add_two_vec(&v, &v2);
 	let rust_time = std::time::Instant::now() - t1;
 	println!("rust_time {:?}", rust_time);
+
+	let a = Array1::from(vec![1.0, 2.0, 3.0]);
+	let b = Array1::from(vec![4.0, 5.0, 6.0]);
+	
+	let result = add_arrays_ndarray(&a, &b);
+	println!("ndarray result {:?}", result);
+
+	let a = vec![1.0, 2.0, 3.0];
+	let b = vec![4.0, 5.0, 6.0];
+
+	let result = add_arrays_rayon(&a, &b);
+	println!("rayon result {:?}", result);
+
+	let a = Tensor::of_slice(&[1.0, 2.0, 3.0]);
+	let b = Tensor::of_slice(&[4.0, 5.0, 6.0]);
+	
+	let result = add_arrays_tch(&a, &b);
+	println!("pytorch result {:?}", result);
+
+	let a = vec![1.0, 2.0, 3.0];
+	let b = vec![4.0, 5.0, 6.0];
+
+	let result = add_vectors_with_opencl(&a, &b);
+	println!("opencl result: {:?}", result);
 }
