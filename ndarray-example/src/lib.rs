@@ -17,4 +17,6 @@ pub fn add_arrays_ndarray_batch() {
   }
 }
 
-
+pub fn sum_array_ndarray(arr: &Array1<f64>) -> f64 {
+  arr.sum()
+}

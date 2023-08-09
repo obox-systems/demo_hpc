@@ -182,7 +182,8 @@ impl GpuConsts {
 		let cs_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
 			label: None,
 			source: wgpu::ShaderSource::Wgsl(all_files!(
-				"vec_func.wgsl"
+				"sum_func.wgsl"
+				// "vec_func.wgsl"
 			).into()),
 		});
 
@@ -230,6 +231,16 @@ pub fn add_two_vec(a: &[u32], b: &[u32], cap: usize) -> Vec<u32> {
   
 	for i in 0..cap {
 	  res.push(a[i] + b[i]);
+	}
+  
+	return res;
+}
+
+pub fn sum_vec(a: &[u32], cap: usize) -> u32 {
+	let mut res = 0;
+  
+	for i in 0..cap {
+	  res += a[i];
 	}
   
 	return res;

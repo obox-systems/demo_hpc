@@ -8,8 +8,26 @@ __global__ void vectorAddition(float* a, float* b, float* result, int size) {
     }
 }
 
+__global__ void vectorSum(float* a, int size, float* sum) {
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    __shared__ float sharedSum;
+
+    if (tid < size) {
+        sharedSum = 0;
+
+        atomicAdd(&sharedSum, a[tid]);
+
+        __syncthreads();
+
+        if (threadIdx.x == 0) {
+            atomicAdd(sum, sharedSum);
+        }
+    }
+}
+
 int main() {
-    int size = 10000000;
+    int size = 1000000;
     int byteSize = size * sizeof(float);
 
     float* hostVectorA = new float[size];
@@ -29,6 +47,10 @@ int main() {
     cudaMemcpy(deviceVectorA, hostVectorA, byteSize, cudaMemcpyHostToDevice);
     cudaMemcpy(deviceVectorB, hostVectorB, byteSize, cudaMemcpyHostToDevice);
 
+    float* deviceSum;
+    cudaMalloc((void**)&deviceSum, sizeof(float));
+    cudaMemset(deviceSum, 0, sizeof(float));
+
     int blockSize = 256;
     int gridSize = (size + blockSize - 1) / blockSize;
 
@@ -38,7 +60,8 @@ int main() {
 
     cudaEventRecord(start, 0);
 
-    vectorAddition<<<gridSize, blockSize>>>(deviceVectorA, deviceVectorB, deviceResult, size);
+    // vectorAddition<<<gridSize, blockSize>>>(deviceVectorA, deviceVectorB, deviceResult, size);
+    vectorSum<<<gridSize, blockSize>>>(deviceVectorA, size, deviceSum);
 
     cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
@@ -51,6 +74,11 @@ int main() {
     // for (int i = 0; i < size; ++i) {
     //     std::cout << hostVectorA[i] << " + " << hostVectorB[i] << " = " << hostResult[i] << std::endl;
     // }
+
+    float hostSum;
+    cudaMemcpy(&hostSum, deviceSum, sizeof(float), cudaMemcpyDeviceToHost);
+
+    std::cout << "Sum of vector elements: " << hostSum << std::endl;
     std::cout << "Elapsed Time: " << elapsedTime << " ms" << std::endl;
 
     delete[] hostVectorA;

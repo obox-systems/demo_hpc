@@ -1,5 +1,5 @@
 use tch::Tensor;
-use tch_example::add_arrays_tch;
+use tch_example::*;
 
 fn main() {
   let a = Tensor::of_slice(&[1.0, 2.0, 3.0]);
@@ -7,4 +7,7 @@ fn main() {
 	
 	let result = add_arrays_tch(&a, &b);
 	println!("pytorch result {:?}", result);
+
+	let c = Tensor::of_slice(&[1.0, 2.0, 3.0]);
+	println!("Sum (tch-rs): {}", sum_array_tch(&c));
 }

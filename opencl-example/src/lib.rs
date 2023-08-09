@@ -1,4 +1,4 @@
-use ocl::{flags, Platform, Device, Context, Queue, Buffer};
+use ocl::{flags, Platform, Device, Context, Queue, Buffer, Program, Kernel};
 use std::iter::repeat;
 
 pub fn add_vectors_with_opencl(a: &[f32], b: &[f32], batches: i32) -> Vec<f32> {
@@ -73,4 +73,36 @@ pub fn add_vectors_with_opencl(a: &[f32], b: &[f32], batches: i32) -> Vec<f32> {
 	.expect("Failed to read OpenCL buffer to host memory.");
 
 	result
+}
+
+pub fn sum_array_opencl(arr: &[f32], batches: i32) -> f32 {
+	let platform = Platform::default();
+	let device = Device::first(platform).expect("No OpenCL devices found.");
+	let context = Context::builder().platform(platform).devices(device.clone()).build().unwrap();
+	let queue = Queue::new(&context, device, None).expect("Couldn't create OpenCL queue.");
+
+	let src = "
+			__kernel void sum_array(__global const float *arr, __global float *result) {
+					int gid = get_global_id(0);
+					result[gid] = arr[gid];
+			}
+	";
+
+	let program = Program::builder().devices(device).src(src).build(&context).unwrap();
+	// program.build_info(&context).unwrap();
+
+	let buffer_arr = Buffer::<f32>::builder().queue(queue.clone()).len(arr.len()).copy_host_slice(arr).build().unwrap();
+	let buffer_result = Buffer::<f32>::builder().queue(queue.clone()).len(arr.len()).build().unwrap();
+
+	let kernel = Kernel::builder().name("sum_array").program(&program).queue(queue.clone()).global_work_size(arr.len()).arg(&buffer_arr).arg(&buffer_result).build().unwrap();
+	for _ in 0..batches {
+		unsafe {
+				kernel.enq().unwrap();
+		}
+	}
+
+	let mut result = vec![0.0; arr.len()];
+	buffer_result.read(&mut result).enq().unwrap();
+
+	result.iter().sum()
 }
