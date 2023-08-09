@@ -1,5 +1,4 @@
-use wgpu::{util::DeviceExt, BindGroupEntry, Instance, Adapter, Device, Queue, AdapterInfo, ShaderModule, Buffer, CommandEncoder};
-use wgsl_and_rust_realization::*;
+use wgpu::{util::DeviceExt, BindGroupEntry, Instance, Adapter, Device, Queue, AdapterInfo, ShaderModule, Buffer};
 
 macro_rules! all_files {
 	($($file:expr),*) => {
@@ -22,13 +21,12 @@ impl Bindings {
 		Bindings{input_output, shared_memory, global_memory: <_>::default()}
 	}
 
-	fn initialize_three(input_output: Vec<u32>, shared_memory: Vec<u32>, global_memory: Vec<u32>) -> Self {
+	pub fn initialize_three(input_output: Vec<u32>, shared_memory: Vec<u32>, global_memory: Vec<u32>) -> Self {
 		Bindings{input_output, shared_memory, global_memory}
 	}
 }
 
 pub struct BufCoder {
-	encoder: CommandEncoder, 
 	staging_buffer: Buffer,
 }
 
@@ -134,7 +132,10 @@ impl BufCoder {
 		// Will copy data from storage buffer on GPU to staging buffer on CPU.
 		encoder.copy_buffer_to_buffer(&storage_buffer, 0, &staging_buffer, 0, size);
 	
-		BufCoder{encoder, staging_buffer}
+    // Submits command encoder for processing
+		gpu.queue.submit(Some(encoder.finish()));
+
+		BufCoder{staging_buffer}
 	}
 }
 
@@ -188,10 +189,7 @@ impl GpuConsts {
 		Ok(GpuConsts{_instance: instance, _adapter: adapter, device, queue, _info: info, cs_module})
 	}
 
-	pub async fn run(&self, bufcoder: BufCoder) -> Option<Vec<u32>> {
-		// Submits command encoder for processing
-		self.queue.submit(Some(bufcoder.encoder.finish()));
-		
+	pub async fn run(&self, bufcoder: &BufCoder) -> Option<Vec<u32>> {
 		// Note that we're not calling `.await` here.
 		let buffer_slice = bufcoder.staging_buffer.slice(..);
 		// Sets the buffer up for mapping, sending over the result of the mapping back to us when it is finished.
@@ -227,68 +225,12 @@ impl GpuConsts {
 	}
 }
 
-fn add_two_vec(a: &[u32], b: &[u32]) -> Vec<u32> {
-	let mut res = Vec::with_capacity(10000000);
+pub fn add_two_vec(a: &[u32], b: &[u32], cap: usize) -> Vec<u32> {
+	let mut res = Vec::with_capacity(cap);
   
-	for i in 0..10000000 {
+	for i in 0..cap {
 	  res.push(a[i] + b[i]);
 	}
   
 	return res;
-}
-
-fn main() {
-    let vec1 = vec![1; 1000000];
-		let vec2 = vec![2; 1000000];
-		let vec3 = vec![2; 1000000];
-
-  	let mut bindings: Bindings = Bindings::initialize_three(vec1, vec2, vec3);
-
-    let t1 = std::time::Instant::now();
-    let gpu = pollster::block_on(GpuConsts::initialaze()).unwrap();
-    let macro_time = std::time::Instant::now() - t1;
-
-    let t1 = std::time::Instant::now();
-    let bc = BufCoder::initialize(&gpu, &mut bindings, "vectorAddition", 3);
-    let buffer_time = std::time::Instant::now() - t1;
-
-    let t1 = std::time::Instant::now();
-    let _ = pollster::block_on(gpu.run(bc)).unwrap();
-    let wgsl_time = std::time::Instant::now() - t1;
-
-    println!("macro_time {:?}", macro_time);
-    println!("buffer_time {:?}", buffer_time);
-    println!("wgsl_time {:?}", wgsl_time);
-
-	let v = vec![1; 100000000];
-  let v2 = vec![2; 100000000];
-
-	let t1 = std::time::Instant::now();
-	add_two_vec(&v, &v2);
-	let rust_time = std::time::Instant::now() - t1;
-	println!("rust_time {:?}", rust_time);
-
-	let a = Array1::from(vec![1.0, 2.0, 3.0]);
-	let b = Array1::from(vec![4.0, 5.0, 6.0]);
-	
-	let result = add_arrays_ndarray(&a, &b);
-	println!("ndarray result {:?}", result);
-
-	let a = vec![1.0, 2.0, 3.0];
-	let b = vec![4.0, 5.0, 6.0];
-
-	let result = add_arrays_rayon(&a, &b);
-	println!("rayon result {:?}", result);
-
-	let a = Tensor::of_slice(&[1.0, 2.0, 3.0]);
-	let b = Tensor::of_slice(&[4.0, 5.0, 6.0]);
-	
-	let result = add_arrays_tch(&a, &b);
-	println!("pytorch result {:?}", result);
-
-	let a = vec![1.0, 2.0, 3.0];
-	let b = vec![4.0, 5.0, 6.0];
-
-	let result = add_vectors_with_opencl(&a, &b);
-	println!("opencl result: {:?}", result);
 }
