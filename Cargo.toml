@@ -1,0 +1,10 @@
+[workspace]
+
+members = [
+  "ndarray-example",
+  "wgsl-example",
+  "opencl-example",
+  "rayon-example",
+  "tch-example",
+  # "tests",
+]
