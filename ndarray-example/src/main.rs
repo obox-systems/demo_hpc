@@ -1,5 +1,5 @@
 use ndarray::*;
-use ndarray_example::add_arrays_ndarray;
+use ndarray_example::*;
 
 
 fn main() {
@@ -8,4 +8,7 @@ fn main() {
 	
 	let result = add_arrays_ndarray(&a, &b);
 	println!("ndarray result {:?}", result);
+
+	let a = Array1::from(vec![1.0, 2.0, 3.0]);
+	println!("Sum (ndarray): {}", sum_array_ndarray(&a));
 }

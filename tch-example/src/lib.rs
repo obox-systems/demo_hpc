@@ -22,3 +22,10 @@ pub fn add_arrays_tch_batch() {
     let _ = add_arrays_tch(&a, &b);
   }
 }
+
+pub fn sum_array_tch(arr: &Tensor) -> f64 {
+  arr.sum(tch::Kind::Float)
+    .to_kind(tch::Kind::Float)
+    .data()
+    .into()
+}

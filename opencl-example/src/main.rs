@@ -1,4 +1,4 @@
-use opencl_example::add_vectors_with_opencl;
+use opencl_example::*;
 
 fn main() {
 	let a = vec![1.0, 2.0, 3.0];
@@ -6,4 +6,8 @@ fn main() {
 
 	let result = add_vectors_with_opencl(&a, &b, 1);
 	println!("opencl result: {:?}", result);
+
+	let arr = vec![1.0, 2.0, 3.0];
+	let sum = sum_array_opencl(&arr, 1);
+	println!("Sum (OpenCL): {}", sum);
 }

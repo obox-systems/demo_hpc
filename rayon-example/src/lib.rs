@@ -19,3 +19,7 @@ pub fn add_arrays_rayon_batch() {
     let _ = add_arrays_rayon(&array1, &array2);
   }
 }
+
+pub fn sum_array_rayon(arr: &[f64]) -> f64 {
+  arr.par_iter().sum()
+}

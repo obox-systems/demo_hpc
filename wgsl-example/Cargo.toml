@@ -8,6 +8,7 @@ wgpu = "*"
 pollster = "0.2"
 bytemuck = { version = "1.12", features = [ "derive" ] }
 futures-intrusive = "0.5.0"
+rand = "0.8"
 
 [dev-dependencies]
 criterion = "0.3"
