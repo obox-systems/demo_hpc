@@ -22,48 +22,25 @@ Rust implementation of the OpenCL API. Provides: a simple and intuitive interfac
 
 ### Sum of two vectors
 
-| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch operations(1000000) time (µs)
-| :--- | :---: | :---: | :---: |
-| ndarray    | 0.073329     | 2.3268     | 2689.5     |  
-| rayon    | 4.5121     | 57.551     | 3204.1     |  
-| tch    | 1.8041     | 22.562     | 2594.3     |  
-| opencl    | 134630     | 218780     | 8794800     |  
-| wgsl    | 3.8407     | 5.4426     | 910.17     | 
-| cuda    | 4.288     | 5.92     | 51.168     | 
-| Rust    | 0.062583 ns    | 23.826     | 2984.0     | 
+| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch(single) operations(10000) time (µs) | Batch operations(1000000) time (µs)| Batch(single) operations(1000000) time (µs)
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| ndarray    | 7.33e-02     | 2.33e+00     | 2.33e-04     | 2.69e+03     |  2.69e-03     |
+| rayon    | 4.51e+00     | 5.76e+01     | 5.76e-03     | 3.20e+03     |  3.20e-03     
+| tch    | 1.80e+00     | 2.26e+01     | 2.26e-03     | 2.59e+03     |   2.59e-03     |
+| opencl    | 1.35e+05     | 2.19e+05     |  2.19e+01     | 8.79e+06     |  8.79e+00     |
+| wgsl    | 3.84e+00     | 5.44e+00     |  5.44e-04     | 9.10e+02     |  9.10e-04     |
+| cuda    | 4.29e+00     | 5.92e+00    | 5.92e-04      | 5.12e+01     |  5.12e-05     |
+| Rust    | 6.26e-02    | 2.38e+01     | 2.38e-03     | 2.98e+03     | 2.98e-03     | 
 
-### Single operation time 
-
-| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch operations(1000000) time (µs)
-| :--- | :---: | :---: | :---: |
-| ndarray    | 0.073329     | 0.00023268     | 0.0026895     |  
-| rayon    | 4.5121     | 0.0057551     | 0.0032041     |  
-| tch    | 1.8041     | 0.0022562     | 0.0025943     |  
-| opencl    | 134630     | 21.8780     | 8.794800     |  
-| wgsl    | 3.8407     | 0.00054426     | 0.00091017     | 
-| cuda    | 4.288     | 0.000592     | 0.000051168     | 
-| Rust    | 0.062583 ns    | 0.0023826     | 0.0029840     | 
 
 ### Sum of vec elements
 
-| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch operations(1000000) time (µs)
-| :--- | :---: | :---: | :---: |
-| ndarray    | 0.0028401     | 1.0144     | 207.29     |  
-| rayon    | 2.2440     | 43.808     | 167.97     |  
-| tch    | 9.1645     | 22.990     | 1171.3     |  
-| opencl    | 130170     | 228300     | 8222400     |  
-| wgsl    | 3.3922     | 4.5717     | 943.88     | 
-| cuda    | 4.288     | 18.432     | 662.016    | 
-| Rust    | 0.0018699     | 0.44940     | 66.243     | 
-
-### Single operation time 
-
-| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch operations(1000000) time (µs)
-| :--- | :---: | :---: | :---: |
-| ndarray    | 0.0028401     | 0.00010144     | 0.00020729     |  
-| rayon    | 2.2440     | 0.0043808     | 0.00016797     |  
-| tch    | 9.1645     | 0.0022990     | 0.0011713     |  
-| opencl    | 130170     | 22.8300     | 8.222400     |  
-| wgsl    | 3.3922     | 0.00045717     | 0.00094388     | 
-| cuda    | 4.288     | 0.0018432     | 0.000662016    | 
-| Rust    | 0.0018699     | 0.000044940     | 0.000066243     | 
+| Function name | Single operation time (µs) | Batch operations(10000) time (µs) | Batch(single) operations(10000) time (µs) | Batch operations(1000000) time (µs) | Batch (single) operations(1000000) time (µs)
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| ndarray    | 2.84e-03     | 1.01e+00    | 1.01e-04     | 2.07e+02     |  2.07e-04     |
+| rayon    | 2.24e+00     | 4.38e+01  |  4.38e-03      | 1.68e+02     |  1.68e-04     | 
+| tch    | 9.16e+00     | 2.30e+01   |  2.30e-03     | 1.17e+03     |  1.17e-03     |
+| opencl    | 1.30e+05     | 2.28e+05    | 2.28e+01     | 8.22e+06     |  8.22e+00     |
+| wgsl    | 3.39e+00     | 4.57e+00    | 4.57e-04     | 9.44e+02     | 9.44e-04     | 
+| cuda    | 4.29e+00     | 1.84e+01    | 1.84e-03     | 6.62e+02    | 6.62e-04    | 
+| Rust    | 1.87e-03     | 4.49e-01    | 4.49e-05      | 6.62e+01     | 6.62e-05     |
