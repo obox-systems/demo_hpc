@@ -104,6 +104,54 @@ fn batch_sum_arrays_rust(c: &mut Criterion) {
   c.bench_function("sum_arrays_rust_batch", |b| b.iter(|| sum_vec(&v, SIZE)));
 }
 
+fn bench_optimized_sum_arrays_rust(c: &mut Criterion) {
+	let v = vec![1, 2, 3];
+
+  c.bench_function("optimized_sum_arrays_rust_one", |b| b.iter(|| optimized_sum_vec(&v, 0, v.len() - 1)));
+}
+
+fn batch_optimized_sum_arrays_rust(c: &mut Criterion) {
+  const SIZE: usize = 10000;
+  let mut rng = rand::thread_rng();
+  let mut v = vec![0; SIZE];
+
+  for j in 0..SIZE {
+    v[j] = rng.gen_range(1..=100);
+  }
+
+  c.bench_function("optimized_sum_arrays_rust_batch", |b| b.iter(|| optimized_sum_vec(&v, 0, v.len() - 1)));
+}
+
+fn bench_optimized_sum_arrays_wgsl(c: &mut Criterion) {
+	let vec1 = vec![1; 1];
+  let vec2 = vec![0; 1];
+  let vec3 = vec![(vec1.len() - 1) as u32; 1];
+  let vec4 = vec![0; 1];
+
+  let mut bindings: Bindings = Bindings::initialize_four(vec1, vec2, vec3, vec4);
+
+  let gpu = pollster::block_on(GpuConsts::initialaze()).unwrap();
+  let bc = BufCoder::initialize(&gpu, &mut bindings, "optimized_vectorSum_call", 4);
+
+
+  c.bench_function("sum_optimized_arrays_wgsl_one", |b| b.iter(|| pollster::block_on(gpu.run(&bc))));
+}
+
+fn batch_optimized_sum_arrays_wgsl(c: &mut Criterion) {
+	let vec1 = vec![1; 10000];
+  let vec2 = vec![0; 1];
+  let vec3 = vec![(vec1.len() - 1) as u32; 1];
+  let vec4 = vec![0; 1];
+
+  let mut bindings: Bindings = Bindings::initialize_four(vec1, vec2, vec3, vec4);
+
+  let gpu = pollster::block_on(GpuConsts::initialaze()).unwrap();
+  let bc = BufCoder::initialize(&gpu, &mut bindings, "optimized_vectorSum_call", 4);
+
+
+  c.bench_function("sum_optimized_arrays_wgsl_one", |b| b.iter(|| pollster::block_on(gpu.run(&bc))));
+}
+
 criterion_group!{
   name = benches;
   config = Criterion::default().sample_size(10);
@@ -111,8 +159,9 @@ criterion_group!{
     bench_add_arrays_wgsl, batch_add_arrays_wgsl,
     bench_add_arrays_rust, batch_add_arrays_rust,
     bench_sum_arrays_wgsl, batch_sum_arrays_wgsl,
-    bench_sum_arrays_rust, batch_sum_arrays_rust
-
+    bench_sum_arrays_rust, batch_sum_arrays_rust,
+    bench_optimized_sum_arrays_rust, batch_optimized_sum_arrays_rust,
+    bench_optimized_sum_arrays_wgsl, batch_optimized_sum_arrays_wgsl
 }
 
 criterion_main!(

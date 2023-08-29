@@ -23,3 +23,16 @@ pub fn add_arrays_rayon_batch() {
 pub fn sum_array_rayon(arr: &[f64]) -> f64 {
   arr.par_iter().sum()
 }
+
+pub fn optimized_array_rayon(arr: &[f64], start: usize, end: usize) -> f64 {
+  if end == start {
+    return arr[end];
+  }
+  if end - start == 1 {
+    return arr[start] + arr[end];
+  }
+  else {
+    return optimized_array_rayon(arr, start, (end - start)/2 + start) 
+    + optimized_array_rayon(arr, (end - start)/2 + start +1, end);
+  }
+}

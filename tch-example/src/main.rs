@@ -10,4 +10,7 @@ fn main() {
 
 	let c = Tensor::of_slice(&[1.0, 2.0, 3.0]);
 	println!("Sum (tch-rs): {}", sum_array_tch(&c));
+
+	let c = Tensor::of_slice(&[1.0, 2.0, 3.0]);
+	println!("Optimized sum (tch-rs): {}", optimized_array_tch(&c, 0, (c.size1().unwrap() - 1) as usize));
 }

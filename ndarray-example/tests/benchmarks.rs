@@ -36,12 +36,28 @@ fn batch_sum_arrays_ndarray(c: &mut Criterion) {
   c.bench_function("add_arrays_ndarray_batch", |b| b.iter(|| sum_array_ndarray(&a)));
 }
 
+fn bench_optimized_sum_arrays_ndarray(c: &mut Criterion) {
+  let first = Array1::from(vec![1.0, 2.0, 3.0]);
+
+  c.bench_function("optimized_add_arrays_ndarray_one", |b| b.iter(|| optimized_array_ndarray(&first, 0, first.len() - 1)));
+}
+
+fn batch_optimized_sum_arrays_ndarray(c: &mut Criterion) {
+  let mut rng = rand::thread_rng();
+  let uniform = Uniform::new(0.0, 100.0);
+
+  let a = Array1::random_using(10000, uniform, &mut rng);
+
+  c.bench_function("optimized_add_arrays_ndarray_batch", |b| b.iter(|| optimized_array_ndarray(&a, 0, a.len() - 1)));
+}
+
 criterion_group!{
   name = benches;
   config = Criterion::default().sample_size(10);
   targets = 
     bench_add_arrays_ndarray, batch_add_arrays_ndarray,
-    bench_sum_arrays_ndarray, batch_sum_arrays_ndarray
+    bench_sum_arrays_ndarray, batch_sum_arrays_ndarray,
+    bench_optimized_sum_arrays_ndarray, batch_optimized_sum_arrays_ndarray
 }
 
 criterion_main!(

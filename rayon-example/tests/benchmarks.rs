@@ -40,12 +40,31 @@ fn batch_sum_arrays_rayon(c: &mut Criterion) {
   c.bench_function("add_arrays_rayon_batch", |b| b.iter(|| sum_array_rayon(&array1)));
 }
 
+fn bench_optimized_sum_arrays_rayon(c: &mut Criterion) {
+	let first = vec![1.0, 2.0, 3.0];
+
+  c.bench_function("optimized_add_arrays_rayon_one", |b| b.iter(|| optimized_array_rayon(&first, 0, first.len() - 1)));
+}
+
+fn batch_optimized_sum_arrays_rayon(c: &mut Criterion) {
+  let mut rng = rand::thread_rng();
+  let mut array1 = vec![0.0; 1000000];
+
+
+  for j in 0..1000000 {
+    array1[j] = rng.gen_range(1.0..=100.0);
+  }
+
+  c.bench_function("optimized_add_arrays_rayon_batch", |b| b.iter(|| optimized_array_rayon(&array1, 0, array1.len() - 1)));
+}
+
 criterion_group!{
   name = benches;
   config = Criterion::default().sample_size(10);
   targets = 
     bench_add_arrays_rayon, batch_add_arrays_rayon,
-    bench_sum_arrays_rayon, batch_sum_arrays_rayon
+    bench_sum_arrays_rayon, batch_sum_arrays_rayon,
+    bench_optimized_sum_arrays_rayon, batch_optimized_sum_arrays_rayon
 }
 
 criterion_main!(

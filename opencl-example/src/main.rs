@@ -10,4 +10,8 @@ fn main() {
 	let arr = vec![1.0, 2.0, 3.0];
 	let sum = sum_array_opencl(&arr, 1);
 	println!("Sum (OpenCL): {}", sum);
+
+	let arr = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
+    let sum = optimized_array_opencl(&arr);
+    println!("Optimized sum(OpenCL): {}", sum);
 }
