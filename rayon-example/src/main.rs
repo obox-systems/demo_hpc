@@ -9,4 +9,7 @@ fn main() {
 
 	let b = vec![1.0, 2.0, 3.0];
 	println!("Sum (rayon): {}", sum_array_rayon(&b));
+
+	let b = vec![1.0, 2.0, 3.0];
+	println!("Optimized sum (rayon): {}", optimized_array_rayon(&b, 0, b.len() - 1));
 }

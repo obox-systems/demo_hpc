@@ -29,3 +29,16 @@ pub fn sum_array_tch(arr: &Tensor) -> f64 {
     .data()
     .into()
 }
+
+pub fn optimized_array_tch(arr: &Tensor, start: usize, end: usize) -> f64 {
+  if end == start {
+    return arr.get(end as i64).into();
+  }
+  if end - start == 1 {
+    return (arr.get(start as i64) + arr.get(end as i64)).into();
+  }
+  else {
+    return optimized_array_tch(arr, start, (end - start)/2 + start) 
+    + optimized_array_tch(arr, (end - start)/2 + start +1, end);
+  }
+}

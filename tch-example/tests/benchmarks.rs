@@ -45,12 +45,32 @@ fn batch_sum_arrays_tch(c: &mut Criterion) {
   c.bench_function("add_arrays_tch_batch", |b| b.iter(|| sum_array_tch(&a)));
 }
 
+fn bench_optimized_sum_arrays_tch(c: &mut Criterion) {
+	let first = Tensor::of_slice(&[1.0, 2.0, 3.0]);
+
+  c.bench_function("optimized_sum_arrays_tch_one", |b| b.iter(|| optimized_array_tch(&first, 0 , (first.size1().unwrap() - 1) as usize)));
+}
+
+fn batch_optimized_sum_arrays_tch(c: &mut Criterion) {
+  let mut rng = rand::thread_rng();
+  let mut array1 = vec![0.0; 1000000];
+
+  for j in 0..1000000 {
+    array1[j] = rng.gen_range(1.0..=100.0);
+  }
+
+  let a = Tensor::of_slice(&array1);
+
+  c.bench_function("optimized_sum_arrays_tch_batch", |b| b.iter(|| optimized_array_tch(&a, 0, (a.size1().unwrap() - 1) as usize)));
+}
+
 criterion_group!{
   name = benches;
   config = Criterion::default().sample_size(10);
   targets = 
   bench_add_arrays_tch, batch_add_arrays_tch,
-  bench_sum_arrays_tch, batch_sum_arrays_tch
+  bench_sum_arrays_tch, batch_sum_arrays_tch,
+  bench_optimized_sum_arrays_tch, batch_optimized_sum_arrays_tch
 }
 
 criterion_main!(

@@ -20,3 +20,16 @@ pub fn add_arrays_ndarray_batch() {
 pub fn sum_array_ndarray(arr: &Array1<f64>) -> f64 {
   arr.sum()
 }
+
+pub fn optimized_array_ndarray(arr: &Array1<f64>, start: usize, end: usize) -> f64 {
+  if end == start {
+    return arr[end];
+  }
+  if end - start == 1 {
+    return arr[start] + arr[end];
+  }
+  else {
+    return optimized_array_ndarray(arr, start, (end - start)/2 + start) 
+    + optimized_array_ndarray(arr, (end - start)/2 + start +1, end);
+  }
+}

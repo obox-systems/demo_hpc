@@ -1,4 +1,4 @@
-use ocl::{flags, Platform, Device, Context, Queue, Buffer, Program, Kernel};
+use ocl::{flags, Platform, Device, Context, Queue, Buffer, Program, Kernel, ProQue};
 use std::iter::repeat;
 
 pub fn add_vectors_with_opencl(a: &[f32], b: &[f32], batches: i32) -> Vec<f32> {
@@ -105,4 +105,70 @@ pub fn sum_array_opencl(arr: &[f32], batches: i32) -> f32 {
 	buffer_result.read(&mut result).enq().unwrap();
 
 	result.iter().sum()
+}
+
+const KERNEL_SRC: &str = r#"
+    double optimized_array_ocl(__global const double* arr, int start, int end) {
+        if (end == start) {
+            return arr[end];
+        }
+        if (end - start == 1) {
+            return arr[start] + arr[end];
+        }
+        else {
+            int mid = (end - start) / 2 + start;
+            double sum1, sum2;
+            sum1 = optimized_array_ocl(arr, start, mid);
+            sum2 = optimized_array_ocl(arr, mid + 1, end);
+            return sum1 + sum2;
+        }
+    }
+
+    __kernel void sum_array(__global const double* arr, int start, int end, __global double* result) {
+        if (get_global_id(0) == 0) {
+            *result = optimized_array_ocl(arr, start, end);
+        }
+    }
+"#;
+
+pub fn optimized_array_opencl(arr: &[f64]) -> f64 {
+    let src = KERNEL_SRC.to_owned();
+    let pro_que = ProQue::builder()
+        .src(src)
+        .dims([1])
+        .build()
+        .expect("Build ProQue");
+
+
+    let queue = pro_que.queue();
+    let program = pro_que.program();
+
+    let n = arr.len();
+    let buffer_arr = Buffer::<f64>::builder()
+        .queue(queue.clone())
+        .flags(flags::MEM_READ_ONLY)
+        .len(n)
+        .copy_host_slice(arr)
+        .build()
+        .expect("Buffer Arr");
+
+    let buffer_result = Buffer::<f64>::builder()
+        .queue(queue.clone())
+        .flags(flags::MEM_WRITE_ONLY)
+        .len(1)
+        .build()
+        .expect("Buffer Result");
+
+	let kernel = Kernel::builder().name("sum_array").program(&program).queue(queue.clone()).global_work_size(arr.len()).arg(&buffer_arr).arg(&0i32).arg(&(n as i32 - 1)).arg(&buffer_result).build().unwrap();
+    unsafe { 
+		kernel.enq().expect("Enqueue Kernel") 
+	};
+
+    let mut result = vec![0.0f64; 1];
+    buffer_result
+        .read(&mut result)
+        .enq()
+        .expect("Read Buffer Result");
+
+    result[0]
 }

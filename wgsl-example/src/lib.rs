@@ -10,19 +10,24 @@ pub struct Bindings {
 	input_output: Vec<u32>,
 	shared_memory: Vec<u32>,
 	global_memory: Vec<u32>,
+	output_vec: Vec<u32>
 }
 
 impl Bindings {
 	pub fn initialize_one(input_output: Vec<u32>) -> Self {
-		Bindings{input_output, shared_memory: <_>::default(), global_memory: <_>::default()}
+		Bindings{input_output, shared_memory: <_>::default(), global_memory: <_>::default(), output_vec: <_>::default()}
 	}
 
 	pub fn initialize_two(input_output: Vec<u32>, shared_memory: Vec<u32>) -> Self {
-		Bindings{input_output, shared_memory, global_memory: <_>::default()}
+		Bindings{input_output, shared_memory, global_memory: <_>::default(), output_vec: <_>::default()}
 	}
 
 	pub fn initialize_three(input_output: Vec<u32>, shared_memory: Vec<u32>, global_memory: Vec<u32>) -> Self {
-		Bindings{input_output, shared_memory, global_memory}
+		Bindings{input_output, shared_memory, global_memory, output_vec: <_>::default()}
+	}
+
+	pub fn initialize_four(input_vec: Vec<u32>, start: Vec<u32>, end: Vec<u32>, output_vec: Vec<u32>) -> Self {
+		Bindings{input_output: input_vec, shared_memory: start, global_memory: end, output_vec}
 	}
 }
 
@@ -95,6 +100,12 @@ impl BufCoder {
 			usage: wgpu::BufferUsages::STORAGE
 		});
 
+		let storage_buffer4 = gpu.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+			label: Some("Global Memory Buffer"),
+			contents: bytemuck::cast_slice(&numbers.output_vec),
+			usage: wgpu::BufferUsages::STORAGE
+		});
+
 		if binding_number > 1 {
 			new_binding_entries.push(
 			wgpu::BindGroupEntry {
@@ -108,6 +119,14 @@ impl BufCoder {
 						binding: 2,
 						resource: storage_buffer3.as_entire_binding(),
 					});
+
+				if binding_number > 3 {
+					new_binding_entries.push(
+						wgpu::BindGroupEntry {
+							binding: 3,
+							resource: storage_buffer4.as_entire_binding(),
+						});
+				}
 			}
 		}
 		
@@ -182,7 +201,8 @@ impl GpuConsts {
 		let cs_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
 			label: None,
 			source: wgpu::ShaderSource::Wgsl(all_files!(
-				"sum_func.wgsl"
+				"optimized_sum_func.wgsl"
+				// "sum_func.wgsl"
 				// "vec_func.wgsl"
 			).into()),
 		});
@@ -244,4 +264,17 @@ pub fn sum_vec(a: &[u32], cap: usize) -> u32 {
 	}
   
 	return res;
+}
+
+pub fn optimized_sum_vec(arr: &[u32], start: usize, end: usize) -> u32 {
+  if end == start {
+    return arr[end];
+  }
+  if end - start == 1 {
+    return arr[start] + arr[end];
+  }
+  else {
+    return optimized_sum_vec(arr, start, (end - start)/2 + start) 
+    + optimized_sum_vec(arr, (end - start)/2 + start +1, end);
+  }
 }
