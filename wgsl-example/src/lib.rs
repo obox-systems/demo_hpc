@@ -1,10 +1,12 @@
+use std::fs::read_to_string;
+
 use wgpu::{util::DeviceExt, BindGroupEntry, Instance, Adapter, Device, Queue, AdapterInfo, ShaderModule, Buffer};
 
-macro_rules! all_files {
-	($($file:expr),*) => {
-		{String::new()$(+include_str!($file)+"\n")*}
-	};
-}
+// macro_rules! all_files {
+// 	($($file:expr),*) => {
+// 		{String::new()$(+include_str!($file)+"\n")*}
+// 	};
+// }
 
 pub struct Bindings {
 	input_output: Vec<u32>,
@@ -168,7 +170,7 @@ pub struct GpuConsts {
 }
 
 impl GpuConsts {
-	pub async fn initialaze() -> Result<GpuConsts, String> {
+	pub async fn initialaze(filename: &str) -> Result<GpuConsts, String> {
 		// Instantiates instance of WebGPU
 		let instance = wgpu::Instance::default();
 
@@ -200,11 +202,7 @@ impl GpuConsts {
 
 		let cs_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
 			label: None,
-			source: wgpu::ShaderSource::Wgsl(all_files!(
-				"optimized_sum_func.wgsl"
-				// "sum_func.wgsl"
-				// "vec_func.wgsl"
-			).into()),
+			source: wgpu::ShaderSource::Wgsl(read_to_string(filename).unwrap().into()),
 		});
 
 		Ok(GpuConsts{_instance: instance, _adapter: adapter, device, queue, _info: info, cs_module})
@@ -256,6 +254,12 @@ pub fn add_two_vec(a: &[u32], b: &[u32], cap: usize) -> Vec<u32> {
 	return res;
 }
 
+pub fn batch_add_two_vec(a: &[u32], b: &[u32], cap: usize, batch: u32) {
+	for _ in 0..batch {
+		add_two_vec(a, b, cap);
+	}
+}
+
 pub fn sum_vec(a: &[u32], cap: usize) -> u32 {
 	let mut res = 0;
   
@@ -264,6 +268,12 @@ pub fn sum_vec(a: &[u32], cap: usize) -> u32 {
 	}
   
 	return res;
+}
+
+pub fn batch_sum_vec(a: &[u32], cap: usize, batch: u32) {
+	for _ in 0..batch {
+		sum_vec(a, cap);
+	}
 }
 
 pub fn optimized_sum_vec(arr: &[u32], start: usize, end: usize) -> u32 {
@@ -277,4 +287,10 @@ pub fn optimized_sum_vec(arr: &[u32], start: usize, end: usize) -> u32 {
     return optimized_sum_vec(arr, start, (end - start)/2 + start) 
     + optimized_sum_vec(arr, (end - start)/2 + start +1, end);
   }
+}
+
+pub fn batch_optimized_sum_vec(arr: &[u32], start: usize, end: usize, batch: u32) {
+  for _ in 0..batch {
+		optimized_sum_vec(arr, start, end);
+	}
 }
