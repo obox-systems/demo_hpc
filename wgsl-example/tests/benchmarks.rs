@@ -205,11 +205,11 @@ fn dry_run_optimized_sum_arrays_wgsl(c: &mut Criterion) {
 fn bench_add_arrays_rust(c: &mut Criterion) {
   let mut rng = rand::thread_rng();
 	let mut vec1 = vec![0; 1000];
-  let vec2 = vec![0; 1];
+  let mut vec2 = vec![0; 1000];
 
   for j in 0..1000 {
     vec1[j] = rng.gen_range(1..=100);
-    vec1[j] = rng.gen_range(1..=100);
+    vec2[j] = rng.gen_range(1..=100);
   }
 
   c.bench_function("add_arrays_rust_one", |b| b.iter(|| add_two_vec(&vec1, &vec2, 1000)));
@@ -218,7 +218,7 @@ fn bench_add_arrays_rust(c: &mut Criterion) {
 fn batch1000_add_arrays_rust(c: &mut Criterion) {
   let mut rng = rand::thread_rng();
   let mut v = vec![0; 1000];
-  let mut v2 = vec![0; 1];
+  let mut v2 = vec![0; 1000];
 
   for j in 0..1000 {
     v[j] = rng.gen_range(1..=100);
@@ -231,7 +231,7 @@ fn batch1000_add_arrays_rust(c: &mut Criterion) {
 fn batch100000_add_arrays_rust(c: &mut Criterion) {
   let mut rng = rand::thread_rng();
   let mut v = vec![0; 1000];
-  let mut v2 = vec![0; 1];
+  let mut v2 = vec![0; 1000];
 
   for j in 0..1000 {
     v[j] = rng.gen_range(1..=100);
@@ -278,7 +278,7 @@ fn batch100000_sum_arrays_rust(c: &mut Criterion) {
     v[j] = rng.gen_range(1..=100);
   }
 
-  c.bench_function("batch1000_sum_arrays_rust", |b| b.iter(|| batch_sum_vec(&v, 1000, 100000)));
+  c.bench_function("batch100000_sum_arrays_rust", |b| b.iter(|| batch_sum_vec(&v, 1000, 100000)));
 }
 
 fn dry_run_sum_arrays_rust(c: &mut Criterion) {
@@ -321,7 +321,7 @@ fn batch100000_optimized_sum_arrays_rust(c: &mut Criterion) {
 }
 
 fn dry_run_optimized_sum_arrays_rust(c: &mut Criterion) {
-  let v = Vec::new();
+  let v = vec![0; 1];
 
   c.bench_function("dry_run_optimized_sum_arrays_rust", |b| b.iter(|| optimized_sum_vec(&v, 0, v.len() - 1)));
 }

@@ -31,7 +31,7 @@ fn batch1000000_add_arrays_ndarray(c: &mut Criterion) {
   let a = Array1::random_using(1000, uniform, &mut rng);
   let b1 = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("add_arrays_ndarray_batch_1000", |b| b.iter(|| add_arrays_ndarray_batch(&a, &b1, 1000000)));
+  c.bench_function("add_arrays_ndarray_batch_100000", |b| b.iter(|| add_arrays_ndarray_batch(&a, &b1, 1000000)));
 }
 
 fn dry_run_add_arrays_ndarray(c: &mut Criterion) {
@@ -47,7 +47,7 @@ fn bench_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("add_arrays_ndarray_one", |b| b.iter(|| sum_array_ndarray(&a)));
+  c.bench_function("sum_arrays_ndarray_one", |b| b.iter(|| sum_array_ndarray(&a)));
 }
 
 fn batch1000_sum_arrays_ndarray(c: &mut Criterion) {
@@ -56,7 +56,7 @@ fn batch1000_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("add_arrays_ndarray_batch_1000", |b| b.iter(|| sum_array_ndarray_batch(&a, 1000)));
+  c.bench_function("sum_arrays_ndarray_batch_1000", |b| b.iter(|| sum_array_ndarray_batch(&a, 1000)));
 }
 
 fn batch1000000_sum_arrays_ndarray(c: &mut Criterion) {
@@ -65,7 +65,7 @@ fn batch1000000_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("add_arrays_ndarray_batch_1000000", |b| b.iter(|| sum_array_ndarray_batch(&a, 1000000)));
+  c.bench_function("sum_arrays_ndarray_batch_1000000", |b| b.iter(|| sum_array_ndarray_batch(&a, 1000000)));
 }
 
 fn dry_run_sum_arrays_ndarray(c: &mut Criterion) {
@@ -80,7 +80,7 @@ fn bench_optimized_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("optimized_add_arrays_ndarray_one", |b| b.iter(|| optimized_array_ndarray(&a, 0, a.len() - 1)));
+  c.bench_function("optimized_sum_arrays_ndarray_one", |b| b.iter(|| optimized_array_ndarray(&a, 0, a.len() - 1)));
 }
 
 fn batch1000_optimized_sum_arrays_ndarray(c: &mut Criterion) {
@@ -89,7 +89,7 @@ fn batch1000_optimized_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("optimized_add_arrays_ndarray_batch_1000", |b| b.iter(|| optimized_array_ndarray_batch(&a, 1000)));
+  c.bench_function("optimized_sum_arrays_ndarray_batch_1000", |b| b.iter(|| optimized_array_ndarray_batch(&a, 1000)));
 }
 
 fn batch1000000_optimized_sum_arrays_ndarray(c: &mut Criterion) {
@@ -98,11 +98,11 @@ fn batch1000000_optimized_sum_arrays_ndarray(c: &mut Criterion) {
 
   let a = Array1::random_using(1000, uniform, &mut rng);
 
-  c.bench_function("optimized_add_arrays_ndarray_batch_1000000", |b| b.iter(|| optimized_array_ndarray_batch(&a, 1000000)));
+  c.bench_function("optimized_sum_arrays_ndarray_batch_1000000", |b| b.iter(|| optimized_array_ndarray_batch(&a, 1000000)));
 }
 
 fn dry_run_optimized_sum_arrays_ndarray(c: &mut Criterion) {
-  let a = Array1::from(vec![]);
+  let a = Array1::from(vec![0.0; 1]);
 
   c.bench_function("dry_run_optimized_sum_arrays_ndarray", |b| b.iter(|| optimized_array_ndarray(&a, 0, 0)));
 }
