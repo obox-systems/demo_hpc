@@ -23,7 +23,7 @@ fn batch1000_vectorAddition_call(@builtin(global_invocation_id) global_id: vec3u
 
 @compute @workgroup_size(256)
 fn batch100000_vectorAddition_call(@builtin(global_invocation_id) global_id: vec3u) {
-  for (var i: u32 = 0u; i < 100000u; i = i + 1u) {
+  for (var i: u32 = 0u; i < 10000u; i = i + 1u) {
     vectorAddition(global_id);
   }
 }

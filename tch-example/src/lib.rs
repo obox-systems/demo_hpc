@@ -5,6 +5,12 @@ pub fn add_arrays_tch(a: &Tensor, b: &Tensor) -> Tensor {
 	a + b
 }
 
+pub fn batch_add_arrays_tch(a: &Tensor, b: &Tensor, batch: u32) {
+  for _ in 0..batch {
+    let _ = add_arrays_tch(a, b);
+  }
+}
+
 pub fn add_arrays_tch_batch() {
   let mut rng = rand::thread_rng();
   let mut array1 = [0.0; 10];
@@ -30,6 +36,12 @@ pub fn sum_array_tch(arr: &Tensor) -> f64 {
     .into()
 }
 
+pub fn batch_sum_array_tch(arr: &Tensor, batch: u32) {
+  for _ in 0..batch {
+    let _ = sum_array_tch(arr);
+  }
+}
+
 pub fn optimized_array_tch(arr: &Tensor, start: usize, end: usize) -> f64 {
   if end == start {
     return arr.get(end as i64).into();
@@ -40,5 +52,11 @@ pub fn optimized_array_tch(arr: &Tensor, start: usize, end: usize) -> f64 {
   else {
     return optimized_array_tch(arr, start, (end - start)/2 + start) 
     + optimized_array_tch(arr, (end - start)/2 + start +1, end);
+  }
+}
+
+pub fn batch_optimized_sum_array_tch(arr: &Tensor, start: usize, end: usize, batch: u32) {
+  for _ in 0..batch {
+    let _ = optimized_array_tch(arr, start, end);
   }
 }

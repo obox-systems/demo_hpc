@@ -153,7 +153,7 @@ fn bench_optimized_sum_arrays_wgsl(c: &mut Criterion) {
   let gpu = pollster::block_on(GpuConsts::initialaze("src/optimized_sum_func.wgsl")).unwrap();
   let bc = BufCoder::initialize(&gpu, &mut bindings, "optimized_vectorSum_call", 2);
 
-  c.bench_function("bench_optimized_sum_arrays_wgsl", |b| b.iter(|| pollster::block_on(gpu.run(&bc))));
+  c.bench_function("optimized_sum_arrays_wgsl_one", |b| b.iter(|| pollster::block_on(gpu.run(&bc))));
 }
 
 fn batch1000_optimized_sum_arrays_wgsl(c: &mut Criterion) {

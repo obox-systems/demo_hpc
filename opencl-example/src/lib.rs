@@ -131,7 +131,7 @@ const KERNEL_SRC: &str = r#"
     }
 "#;
 
-pub fn optimized_array_opencl(arr: &[f64]) -> f64 {
+pub fn optimized_array_opencl(arr: &[f64], batches: u32) -> f64 {
     let src = KERNEL_SRC.to_owned();
     let pro_que = ProQue::builder()
         .src(src)
@@ -159,10 +159,12 @@ pub fn optimized_array_opencl(arr: &[f64]) -> f64 {
         .build()
         .expect("Buffer Result");
 
-	let kernel = Kernel::builder().name("sum_array").program(&program).queue(queue.clone()).global_work_size(arr.len()).arg(&buffer_arr).arg(&0i32).arg(&(n as i32 - 1)).arg(&buffer_result).build().unwrap();
-    unsafe { 
-		kernel.enq().expect("Enqueue Kernel") 
-	};
+	for _ in 0..batches {
+		let kernel = Kernel::builder().name("sum_array").program(&program).queue(queue.clone()).global_work_size(arr.len()).arg(&buffer_arr).arg(&0i32).arg(&(n as i32 - 1)).arg(&buffer_result).build().unwrap();
+			unsafe { 
+			kernel.enq().expect("Enqueue Kernel") 
+		};
+	}		
 
     let mut result = vec![0.0f64; 1];
     buffer_result

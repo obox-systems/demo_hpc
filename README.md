@@ -25,6 +25,7 @@ WebGPU Shading Language (WGSL) is the shader language for WebGPU. That is, an ap
 ## How to run
 
 cargo run --bin cli .benchmarks.run crate:ndarray
+cargo run --bin cli .results.get function:all
 
 ## Results of benchmark tests
 
