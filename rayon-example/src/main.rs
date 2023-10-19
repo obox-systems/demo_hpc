@@ -1,15 +1,18 @@
 use rayon_example::*;
 
 fn main() {
-	let a = vec![1.0, 2.0, 3.0];
-	let b = vec![4.0, 5.0, 6.0];
+    let a = vec![1.0, 2.0, 3.0];
+    let b = vec![4.0, 5.0, 6.0];
 
-	let result = add_arrays_rayon(&a, &b);
-	println!("rayon result {:?}", result);
+    let result = add_arrays_rayon(&a, &b);
+    println!("rayon result {:?}", result);
 
-	let b = vec![1.0, 2.0, 3.0];
-	println!("Sum (rayon): {}", sum_array_rayon(&b));
+    let b = vec![1.0, 2.0, 3.0];
+    println!("Sum (rayon): {}", sum_array_rayon(&b));
 
-	let b = vec![1.0, 2.0, 3.0];
-	println!("Optimized sum (rayon): {}", optimized_array_rayon(&b, 0, b.len() - 1));
+    let b = vec![1.0, 2.0, 3.0];
+    println!(
+        "Optimized sum (rayon): {}",
+        optimized_array_rayon(&b, 0, b.len() - 1)
+    );
 }

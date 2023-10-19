@@ -6,5 +6,5 @@ members = [
   "opencl-example",
   "rayon-example",
   "tch-example",
-  # "tests",
+  "cli",
 ]

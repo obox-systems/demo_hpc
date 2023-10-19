@@ -46,7 +46,7 @@ fn batch1000_optimized_vectorSum_call(@builtin(global_invocation_id) global_id: 
 
 @compute @workgroup_size(256)
 fn batch100000_optimized_vectorSum_call(@builtin(global_invocation_id) global_id: vec3u) {
-	for (var i: u32 = 0u; i < 100000u; i = i + 1u) {
+	for (var i: u32 = 0u; i < 10000u; i = i + 1u) {
     optimized_vectorSum(global_id);
   }
 }
